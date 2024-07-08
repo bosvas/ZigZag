@@ -9,3 +9,13 @@ Repeat the second and third steps until you can't move in the tree.
 Zigzag length is defined as the number of nodes visited - 1. (A single node has a length of 0).
 
 Return the longest ZigZag path contained in that tree.
+
+test cases
+1 null 1 1 1 null null 1 1 null 1 null null null 1
+//solution - 3
+1 1 1 null 1 null null 1 1 null 1
+//solution - 4
+1
+//solution - 0
+1 1 1
+//solution - 1

@@ -13,41 +13,22 @@ func treeReader() {
 	reader := bufio.NewReader(os.Stdin)
 
 	//Enter example is :
-	//1 2 L
-	//1 3 R
-	//2 4 R
-	//4 5 L
-	//4 6 R
-	//3 7 L
+	//1 null 1 1 1 null null 1 1 null 1 null null null 1
+	//solution - 3
+	//1 1 1 null 1 null null 1 1 null 1
+	//solution - 4
+	//1
+	//solution - 0
+	//1 1 1
+	//solution - 1
 
-	fmt.Println("Please enter edges in format 'int int (L/R)' where first - is parent, second is child and L or R is position. Write 'stop' to finish):")
+	fmt.Println("Ilya, hi! Please enter data in one string in format:'1 null 1 1 1 null null 1 1 null 1 null null null 1':")
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
 
-	var edges [][]interface{}
+	values := strings.Split(input, " ")
 
-	for {
-		input, _ := reader.ReadString('\n')
-		input = strings.TrimSpace(input)
-		if input == "stop" {
-			break
-		}
-		parts := strings.Fields(input)
-		if len(parts) != 3 {
-			fmt.Println("Ooops, you did something wrong, try again (not 3 var in this line's input")
-			continue
-		}
-		parent, err1 := strconv.Atoi(parts[0])
-		child, err2 := strconv.Atoi(parts[1])
-		side := parts[2]
-
-		if err1 != nil || err2 != nil || (side != "L" && side != "R") {
-			fmt.Println("Ooops, you did something wrong, try again (not int int L/R type of input)")
-			continue
-		}
-
-		edges = append(edges, []interface{}{parent, child, side})
-	}
-
-	root := buildTree(edges)
+	root := buildTree(values)
 	if root == nil {
 		fmt.Println("You can't make tree from your input")
 		return
@@ -58,51 +39,42 @@ func treeReader() {
 
 }
 
-func buildTree(edges [][]interface{}) *TreeNode {
+func buildTree(values []string) *TreeNode {
 
-	nodes := make(map[int]*TreeNode)
-	parents := make(map[int]bool)
+	rootVal, _ := strconv.Atoi(values[0])
 
-	var root *TreeNode
+	if len(values) == 0 || rootVal != 1 {
+		return nil
+	}
 
-	for _, edge := range edges {
-		parentVal, childVal := edge[0].(int), edge[1].(int)
-		side := edge[2].(string)
+	root := &TreeNode{Val: rootVal}
+	queue := []*TreeNode{root}
 
-		if parents[childVal] {
-			fmt.Printf("Node %d already has a parent.\n", childVal)
-			return nil
-		}
-		parents[childVal] = true
+	i := 1
+	for i < len(values) {
+		node := queue[0]
+		queue = queue[1:]
 
-		parent, exists := nodes[parentVal]
-		if !exists {
-			parent = &TreeNode{Val: parentVal}
-			nodes[parentVal] = parent
-		}
-
-		child, exists := nodes[childVal]
-		if !exists {
-			child = &TreeNode{Val: childVal}
-			nodes[childVal] = child
-		}
-
-		if side == "L" {
-			if parent.Left != nil {
-				fmt.Printf("Node %d already has Left child.\n", parentVal)
-				return nil
+		if i < len(values) {
+			if values[i] != "null" {
+				leftVal, _ := strconv.Atoi(values[i])
+				node.Left = &TreeNode{Val: leftVal}
+				queue = append(queue, node.Left)
+			} else {
+				node.Left = nil
 			}
-			parent.Left = child
-		} else if side == "R" {
-			if parent.Right != nil {
-				fmt.Printf("Node %d already has Right child.\n", parentVal)
-				return nil
-			}
-			parent.Right = child
+			i++
 		}
 
-		if root == nil || root == child {
-			root = parent
+		if i < len(values) {
+			if values[i] != "null" {
+				rightVal, _ := strconv.Atoi(values[i])
+				node.Right = &TreeNode{Val: rightVal}
+				queue = append(queue, node.Right)
+			} else {
+				node.Right = nil
+			}
+			i++
 		}
 	}
 
