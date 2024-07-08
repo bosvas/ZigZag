@@ -59,6 +59,7 @@ func treeReader() {
 }
 
 func buildTree(edges [][]interface{}) *TreeNode {
+
 	nodes := make(map[int]*TreeNode)
 	parents := make(map[int]bool)
 
